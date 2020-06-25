@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset=utf-8/>
+        <title>website</title>
+        
+        <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+        <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+	</head>
+	<script th:inline="javascript">/*<![CDATA[*/
+
+		/*]]>*/
+	</script>
+	<body>
+		<div id="content">
+            <div id="loginDiv">
+                <h2>LOGIN</h2>
+                <form id="loginForm" name="loginForm">
+                    <input type="text" id="userId" name="username"/>
+                    <input type="password" id="pwd" name="password"/>
+                    <input type="submit" id="loginButton"/>
+                </form>
+            </div>
+        </div>
+	</body>
+</html>
