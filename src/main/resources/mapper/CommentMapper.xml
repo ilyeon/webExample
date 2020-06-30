@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.website.mapper.CommentMapper">
+	<insert id="insertComment" parameterType="com.example.website.model.Comment">
+        insert into tb_comment (board_id, comment, user_id)
+        values (#{boardId,jdbcType=INTEGER}, #{comment,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER})
+    </insert>
+</mapper>

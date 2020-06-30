@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset=utf-8/>
+        <title>website</title>
+        
+        <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+        <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+	</head>
+	<script th:inline="javascript">/*<![CDATA[*/
+       
+       $(function(){
+           $("#commentButton").click(function(){
+               addComment();
+           })
+       })
+
+        function addComment()
+		{	
+			$.ajax({
+				url : /*[[@{|/addComment|}]]*/,
+				type : "POST",
+				cache : false,
+                data : new FormData(document.getElementById("commentForm")),
+				contentType : false,
+				processData : false,
+				success : function(data) {
+				}
+			});
+		}
+		/*]]>*/
+	</script>
+	<body>
+        <p th:text="${board.title}"></p>
+        <p th:text="${board.content}"></p>
+        
+        <form id="commentForm">
+            <input type="hidden" name="boardId" th:value="${board.id}">
+            <input type="text" name="comment">
+            <button type="button" id="commentButton">입력</button>
+        </form>
+
+        <div>
+
+        </div>
+        
+
+	</body>
+</html>

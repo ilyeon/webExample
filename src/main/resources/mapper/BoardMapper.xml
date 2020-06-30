@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.website.mapper.BoardMapper">
+	<resultMap id="BaseResultMap" type="com.example.website.model.Board">
+		<id column="ID" jdbcType="INTEGER" property="id"/>
+		<result column="TITLE" jdbcType="VARCHAR" property="title"/>
+        <result column="CONTENT" jdbcType="VARCHAR" property="content"/>
+        <result column="VIEW_COUNT" jdbcType="INTEGER" property="viewCount"/>
+        <result column="USER_ID" jdbcType="INTEGER" property="userId"/>
+		<result column="DATE_TIME" jdbcType="TIMESTAMP" property="dateTime"/>
+	</resultMap>
+
+	<insert id="insertBoard" parameterType="com.example.website.model.Board">
+		INSERT into tb_board (title, content, user_id, date_time)
+		VALUES (#{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, NOW())
+	</insert>
+
+	<select id="selectBoardList" resultType="java.util.HashMap">
+		SELECT b.id, b.title, u.name as writer
+		from tb_board AS b
+			LEFT JOIN tb_user AS u ON b.user_id = u.id
+	</select>
+
+	<select id="selectBoard" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select id, title, content, view_count, date_time
+		from tb_board
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+</mapper>
