@@ -21,19 +21,17 @@ public class UserService implements UserDetailsService
 	@Autowired
 	PasswordEncoder passwordEncoder;
 
-	public boolean createUser(User user)
+	public void createUser(User user)
 	{
-		User alreadyUser = userMapper.selectUserByUsername(user.getLogin());
-
-		if(alreadyUser == null)
+		//아이디 중복 체크
+		if(userMapper.selectUserByUsername(user.getLogin()) == null)
 		{
 			user.setPassword(passwordEncoder.encode(user.getPassword()));
 			userMapper.insertUser(user);
-			return true;
 		}
 		else
 		{
-			return false;
+			
 		}
 	}
 

@@ -19,14 +19,7 @@ public class MainController
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String base(Authentication authentication)
     {
-        if (authentication == null)
-		{
-			return "redirect:login";
-		}
-		else
-		{
-			return "redirect:main";
-        }
+       return "redirect:/main";
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -38,7 +31,7 @@ public class MainController
 		}
 		else
 		{
-			return "main";
+			return "redirect:/main";
 		}
 	}
 
@@ -75,15 +68,15 @@ public class MainController
             return "register";
         }
         
-        if(userService.createUser(user))
+        try
         {
+            userService.createUser(user);
             return "redirect:/login";
-        }
-        else
+        } 
+        catch (final Exception e)
         {
             model.addAttribute("idDuplicate", "아이디 중복");
             return "register";
         }
-        
     }
 }
