@@ -15,12 +15,13 @@
 		<div id="content">
             <div id="loginDiv">
                 <h2>LOGIN</h2>
-                <form id="loginForm" name="loginForm">
+                <form id="loginForm" name="loginForm" th:action="@{/login}" method="POST">
                     <input type="text" id="userId" name="username"/>
                     <input type="password" id="pwd" name="password"/>
                     <input type="submit" id="loginButton"/>
                 </form>
             </div>
+            <br/><a th:href="@{/register}" style="background-color: bisque; width: 100px;">회원가입</a>
         </div>
 	</body>
 </html>

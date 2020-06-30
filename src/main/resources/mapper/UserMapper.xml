@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.website.mapper.UserMapper">
+	<resultMap id="BaseResultMap" type="com.example.website.model.User">
+		<id column="USER_ID" jdbcType="INTEGER" property="id"/>
+		<result column="LOGIN" jdbcType="VARCHAR" property="login"/>
+        <result column="PASSWORD" jdbcType="VARCHAR" property="password"/>
+        <result column="NAME" jdbcType="VARCHAR" property="name"/>
+	</resultMap>
+
+    <insert id="insertUser" parameterType="com.example.website.model.User">
+        insert into tb_user (login, password, name)
+        values (#{login,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="selectUserByUsername" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select user_id, login, password, name
+        from tb_user
+        where login=#{login, jdbcType=VARCHAR}
+    </select>
+</mapper>

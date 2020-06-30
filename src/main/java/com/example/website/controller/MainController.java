@@ -1,20 +1,89 @@
 package com.example.website.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import com.example.website.model.User;
+import com.example.website.service.UserService;
 
-@Controller
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+@Controller 
 public class MainController
 {
-    @RequestMapping(value = "/")
-    public String base()
+    @Autowired
+    UserService userService;
+
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String base(Authentication authentication)
     {
-        return "redirect:login";
+        if (authentication == null)
+		{
+			return "redirect:login";
+		}
+		else
+		{
+			return "redirect:main";
+        }
     }
 
-    @RequestMapping(value = "login")
-    public String login()
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public String login(Model model, Authentication authentication)
+	{
+		if (authentication == null)
+		{
+			return "login";
+		}
+		else
+		{
+			return "main";
+		}
+	}
+
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    public String register()
     {
-        return "login";
+        return "register";
+    }
+
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public String createUser(User user, String passwordCheck, Model model)
+    {
+        if(user.getName() == null || user.getName() == "")
+        {
+            model.addAttribute("nameBlank", "이름 미입력");
+            return "register";
+        }
+
+        if(user.getLogin() == null)
+        {
+            model.addAttribute("idBlank", "아이디 미입력");
+            return "register";
+        }
+
+        if(user.getPassword() == null)
+        {
+            model.addAttribute("pwdBlank", "비밀번호 미입력");
+            return "register";
+        }
+
+        if(!user.getPassword().equals(passwordCheck))
+        {
+            model.addAttribute("errorPwdCheck", "비밀번호 불일치");
+            return "register";
+        }
+        
+        if(userService.createUser(user))
+        {
+            return "redirect:/login";
+        }
+        else
+        {
+            model.addAttribute("idDuplicate", "아이디 중복");
+            return "register";
+        }
+        
     }
 }
