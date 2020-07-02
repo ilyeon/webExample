@@ -6,6 +6,7 @@ public class Comment
     private int boardId;
     private String comment;
     private int userId;
+    private String writer;
 
     public int getId() {
         return this.id;
@@ -38,5 +39,12 @@ public class Comment
     public void setUserId(int userId) {
         this.userId = userId;
     }
+    
+    public String getWriter() {
+        return this.writer;
+    }
 
+    public void setWriter(String writer) {
+        this.writer = writer;
+    }
 }

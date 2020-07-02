@@ -6,17 +6,105 @@
         
         <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
         <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
-	</head>
+    </head>
+    
+    <script id="list-template" type="text/x-handlebars-template">
+		{{#each this}}
+		<tr>
+			<td class="writer">{{writer}}</td>
+			<td class="comment">{{comment}}</td>
+			<td class="modify">{{{modifyComment id}}}</td>
+			<td class="remove">{{{removeComment id}}}</td>
+		</tr>
+		{{/each}}
+    </script>
+    
 	<script th:inline="javascript">/*<![CDATA[*/
-       
+
+     	Handlebars.registerHelper('modifyComment', function(id){
+			return "<a onclick='showModifyCommentInput("+id+", this)'>수정</a>";
+		});
+
+		Handlebars.registerHelper('removeComment', function(id){
+			return "<a onclick='removeComment("+id+")'>삭제</a>";
+		});
+
        $(function(){
+            loadCommentList();
+
            $("#commentButton").click(function(){
-               addComment();
+               if(!($("#commentInput").val() == null || $("#commentInput").val() == ''))
+               {    
+                    addComment();
+                    $("#commentInput").val('');
+               }
            })
        })
+	   
+	   function showModifyCommentInput(id, a)
+	   {
+			var tr = $(a).parent().parent();
+			var comment = tr.find(".comment");
+			var modify = tr.find(".modify").hide();
+			var remove = tr.find(".remove").hide();
+			
+			var commentInput = document.createElement('input');
+			commentInput.value = comment.text()
+
+			var save = document.createElement('a');
+			save.onclick = function(){
+				modifyComment(id, commentInput);
+			}
+			save.innerHTML = "저장";
+
+			var cancle = document.createElement('a');
+			cancle.onclick = function(){
+				commentInput.remove();
+				save.remove();
+				cancle.remove();
+				comment.show();
+				modify.show();
+				remove.show();
+			}
+			cancle.innerHTML = "취소"
+
+			comment.hide();
+			modify.hide();
+			remove.hide();
+			tr.append(commentInput);
+			tr.append(save);
+			tr.append(cancle);
+	   }
+
+	   function modifyComment(id, input)
+	   {	
+			$.ajax({
+				url : /*[[@{|/modifyComment|}]]*/,
+				type : "POST",
+				data : {"id" : id, "comment" : input.value},
+				cache : false,
+				success : function(data)
+				{
+                    loadCommentList();
+				}	
+			});
+	   }
+
+	   function removeComment(id)
+	   {
+			$.ajax({
+				url : /*[[@{|/deleteComment|}]]*/,
+				type : "POST",
+				data : {"id" : id},
+				cache : false,
+				success : function(data) {
+                    loadCommentList();
+				}
+			});
+	   }
 
         function addComment()
-		{	
+		{
 			$.ajax({
 				url : /*[[@{|/addComment|}]]*/,
 				type : "POST",
@@ -25,23 +113,87 @@
 				contentType : false,
 				processData : false,
 				success : function(data) {
+                    loadCommentList();
 				}
 			});
+		}
+
+        function loadCommentList()
+		{
+			$.ajax({
+				url : /*[[@{|/commentList|}]]*/,
+				type : "POST",
+                data : new FormData(document.getElementById("commentForm")),
+				cache : false,
+				contentType : false,
+				processData : false,
+				success : function(data) {
+					console.log(data);
+					
+					var source = $("#list-template").html();
+					var template = Handlebars.compile(source);
+					var itemList = template(data); 
+					
+					$('#commentList').html(itemList);
+				}
+			});
+		}
+
+		function deleteBoard()
+		{
+			$.ajax({
+				url : /*[[@{|/deleteBoard|}]]*/,
+				type : "POST",
+				data : {"id" : /*[[${board.id}]]*/},
+				cache : false,
+				success : function(data)
+				{
+					if(data == 1)
+					{
+						location.href="/webExample/main";
+					}
+					else 
+					{
+						alert("권한이 없습니다");
+					}
+				}
+			});
+		}
+
+		function updateBoard()
+		{
+			if(/*[[@{canModify}]]*/)
+			{
+				location.href="/webExample/modifyBoard/"+/*[[${board.id}]]*/
+			}
+			else
+			{
+				alert("권한이 없습니다");
+			}
 		}
 		/*]]>*/
 	</script>
 	<body>
+		<p><a th:href="@{/main}">목록</a></p>
         <p th:text="${board.title}"></p>
-        <p th:text="${board.content}"></p>
-        
+		<p th:text="${board.content}"></p>
+		<p th:if="${canModify}" onclick="updateBoard()">수정</p>
+        <p th:if="${canModify}" onclick="deleteBoard()">삭제</p>
         <form id="commentForm">
-            <input type="hidden" name="boardId" th:value="${board.id}">
-            <input type="text" name="comment">
+            <input type="hidden" id ="boardId" name="boardId" th:value="${board.id}">
+            <input type="text" name="comment" id="commentInput">
             <button type="button" id="commentButton">입력</button>
         </form>
 
         <div>
-
+            <table id="commentTable">
+                <tr>
+                    <td>작성자</td>
+                    <td>내용</td>
+                </tr>
+                <tbody id="commentList">
+                </tbody>
+            </table>
         </div>
         
 

@@ -13,4 +13,7 @@ public interface BoardMapper
     public void insertBoard(Board board);
     public List<HashMap<String, Object>> selectBoardList();
     public Board selectBoard(int id);
+    public Board selectBoardByCommentId(int commentId);
+    public void updateBoard(Board board);
+    public void deleteBoard(int id);
 }

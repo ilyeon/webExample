@@ -22,8 +22,27 @@
 	</select>
 
 	<select id="selectBoard" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-		select id, title, content, view_count, date_time
+		select id, title, content, view_count, date_time, user_id
 		from tb_board
 		where id = #{id,jdbcType=INTEGER}
 	</select>
+
+	<select id="selectBoardByCommentId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select b.id, b.title, b.content, b.view_count, b.date_time
+		from tb_board as b
+		left join tb_comment as c on b.id = c.board_id
+		where c.id = #{commentId,jdbcType=INTEGER}
+	</select>
+
+	<update id="updateBoard" parameterType="com.example.website.model.Board">
+		UPDATE tb_board
+		SET title=#{title,jdbcType=VARCHAR}, content=#{content,jdbcType=VARCHAR}, date_time = NOW()
+		WHERE id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<delete id="deleteBoard" parameterType="java.lang.Integer">
+		DELETE
+		FROM tb_board
+		WHERE id = #{id,jdbcType=INTEGER}
+	</delete>
 </mapper>

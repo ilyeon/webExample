@@ -35,8 +35,43 @@ public class BoardService
         return boardMapper.selectBoard(id);
     }
 
+    public Board getBoardByCommentId(int commentId)
+    {
+        return boardMapper.selectBoardByCommentId(commentId);
+    }
+
+    public void modifyBoard(Board board)
+    {
+        boardMapper.updateBoard(board);
+    }
+
+    public void removeBoard(int id)
+    {
+        boardMapper.deleteBoard(id);
+    }
+
     public void addComment(Comment comment)
     {
         commentMapper.insertComment(comment);
+    }
+
+    public Comment getComment(int id)
+    {
+        return commentMapper.selectComment(id);
+    }
+
+    public List<Comment> getCommentList(int boardId)
+    {
+        return commentMapper.selectCommentList(boardId);
+    }
+
+    public void updateComment(Comment comment)
+    {
+        commentMapper.updateComment(comment);
+    }
+
+    public void removeComment(int id)
+    {
+        commentMapper.deleteComment(id);
     }
 }
