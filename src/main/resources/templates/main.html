@@ -2,13 +2,13 @@
 <html xmlns:th="http://www.thymeleaf.org">
 	<head>
 		<meta charset=utf-8/>
-        <title>website</title>
-        
-        <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
-        <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
-    </head>
-    
-    <script id="list-template" type="text/x-handlebars-template">
+		<title>website</title>
+		
+		<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+		<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+	</head>
+	
+	<script id="list-template" type="text/x-handlebars-template">
 		{{pageMaker.criteria.currentPage}}
 		{{#if list}}
 			{{#each list}}
@@ -39,6 +39,16 @@
 		$(function()
 		{
 			loadBoardList();
+
+			document.getElementById("searchForm").onkeypress = function(e)
+			{
+				var key = e.charCode || e.keyCode || 0;     
+				if (key == 13)
+				{
+					setSearchData();
+					return false;
+				}
+			}
 		})
 
 		function loadBoardList()
@@ -87,30 +97,32 @@
 			return index+1+((pageMaker.criteria.currentPage-1)*pageMaker.criteria.perPageNum);
 		});
 
+		
+
 		/*]]>*/
 	</script>
 	<body>
 		<div id="header">
 			<h3>BOARD</h3>
-			<a th:href="@{/logout}">로그아웃</a>
-        </div>
-        <div id="boards">
+			<p th:text="${user.name}"></p><a th:href="@{/logout}">로그아웃</a>
+		</div>
+		<div id="boards">
 			<div style="background-color: bisque; width: fit-content;"><a th:href="@{/newBoard}"> new </a></div>
 			<div>
 				<form id="searchForm">
 					<input type="text" id="searchVal"/>
-					<button type="button" onclick="setSearchData()">검색</button>
+					<button type="button" id="searchButton" onclick="setSearchData()">검색</button>
 				</form>
 			</div>
-            <table id="listTable" style="border: 1px solid black; width: 70%;">
-                <thead>
-                    <tr>
-                        <th >No</th>
-                        <th>제목</th>
-                        <th>작성자</th>
-                    </tr>
-                </thead>
-                <tbody id="postList"></tbody>
+			<table id="listTable" style="border: 1px solid black; width: 70%;">
+				<thead>
+					<tr>
+						<th>No</th>
+						<th>제목</th>
+						<th>작성자</th>
+					</tr>
+				</thead>
+				<tbody id="postList"></tbody>
 			</table>
 			</div>
 			<div id="pageButtonDiv">
@@ -119,6 +131,6 @@
 				<input type="hidden" id="currentPage" name="currentPage" value="1"/>
 				<input type="hidden" id="titleSearch" name="titleSearch" />
 			</form>
-        </div>
+		</div>
 	</body>
 </html>

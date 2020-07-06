@@ -12,7 +12,9 @@ import com.example.website.service.BoardService;
 import com.example.website.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +33,7 @@ public class BoardController
     UserService userService;
 
     @RequestMapping(value = "/main")
-    public String manePage(Authentication authentication)
+    public String manePage(Authentication authentication, Model model)
     {
         if (authentication == null)
 		{
@@ -39,6 +41,7 @@ public class BoardController
 		}
 		else
 		{
+            model.addAttribute("user", authentication.getPrincipal());
 			return "main";
 		}
     }
@@ -60,27 +63,28 @@ public class BoardController
         return map;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/newBoard", method = RequestMethod.GET)
     public String newBoard()
     {
         return "newBoard";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/createBoard", method = RequestMethod.POST)
-    public String createBoard(Board board, Authentication authentication)
+    public String createBoard(Board board, @AuthenticationPrincipal LoginUserDetails userDetails)
     {
-        LoginUserDetails userDetails = (LoginUserDetails) authentication.getPrincipal();
-        
         board.setuserId(userDetails.getId());
         boardService.createBoard(board);
 
         return "redirect:/main";
     }
 
+    
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/board/{id}")
-    public String boardDetail(@PathVariable("id") int id, Model model, Authentication authentication)
+    public String boardDetail(@PathVariable("id") int id, Model model, @AuthenticationPrincipal LoginUserDetails userDetails)
     {
-        LoginUserDetails userDetails = (LoginUserDetails) authentication.getPrincipal();
         Board board = boardService.getBoard(id);
         model.addAttribute("canModify", (board.getuserId() == userDetails.getId()));
         model.addAttribute("board", boardService.getBoard(id));
@@ -89,6 +93,7 @@ public class BoardController
         return "boardDetail";
     }
 
+    @PreAuthorize("isMyBoard(#id)")
     @RequestMapping(value = "modifyBoard/{id}", method = RequestMethod.GET)
     public String modifyBoard(@PathVariable("id") int id, Model model)
     {
@@ -98,9 +103,8 @@ public class BoardController
 
     @ResponseBody
     @RequestMapping(value = "updateBoard", method = RequestMethod.POST)
-    public int updateBoard(Board board, Authentication authentication) throws Exception
+    public int updateBoard(Board board, @AuthenticationPrincipal LoginUserDetails userDetails) throws Exception
     {
-        LoginUserDetails userDetails = (LoginUserDetails) authentication.getPrincipal();
         Board updateBoard = boardService.getBoard(board.getId());
 
         if(updateBoard.getuserId() != userDetails.getId())
@@ -115,27 +119,25 @@ public class BoardController
     }
 
     @ResponseBody
+    @PreAuthorize("isMyBoard(#id)")
     @RequestMapping(value = "deleteBoard")
-    public int removeBoard(@RequestParam("id") int id ,Authentication authentication) 
+    public int removeBoard(@RequestParam("id") int id) 
     {
-        LoginUserDetails userDetails = (LoginUserDetails) authentication.getPrincipal();
         Board board = boardService.getBoard(id);
 
-        if(board.getuserId() != userDetails.getId())
+        if(board != null)
         {
-            return 0;
+            boardService.removeBoard(id);
+            return 1;
         }
-
-        boardService.removeBoard(id);
-        return 1;
+        
+        return 0;
     }
 
     @ResponseBody
     @RequestMapping(value = "addComment", method = RequestMethod.POST)
-    public void addComment(Comment comment, Authentication authentication)
+    public void addComment(Comment comment, @AuthenticationPrincipal LoginUserDetails userDetails)
     {
-        LoginUserDetails userDetails = (LoginUserDetails) authentication.getPrincipal();
-
         comment.setUserId(userDetails.getId());
         boardService.addComment(comment);
     }
@@ -148,10 +150,10 @@ public class BoardController
     }
 
     @ResponseBody
+    @PreAuthorize("isMyComment(#id)")
     @RequestMapping(value = "modifyComment", method = RequestMethod.POST)
-    public void modifyComment(@RequestParam("id") int id, @RequestParam("comment") String comment, Authentication authentication)
+    public void modifyComment(@RequestParam("id") int id, @RequestParam("comment") String comment, @AuthenticationPrincipal LoginUserDetails userDetails)
     {
-        LoginUserDetails userDetails = (LoginUserDetails) authentication.getPrincipal();
         Comment updateComment = boardService.getComment(id);
         if(updateComment != null && (updateComment.getUserId() == userDetails.getId()))
         {
@@ -161,10 +163,10 @@ public class BoardController
     }
 
     @ResponseBody
+    @PreAuthorize("isMyComment(#id)")
     @RequestMapping(value = "deleteComment", method=RequestMethod.POST)
-    public void removeComment(@RequestParam("id") int id, Authentication authentication)
+    public void removeComment(@RequestParam("id") int id, @AuthenticationPrincipal LoginUserDetails userDetails)
     {
-        LoginUserDetails userDetails = (LoginUserDetails) authentication.getPrincipal();
         Comment comment = boardService.getComment(id);
 
         if(userDetails.getId() == comment.getUserId())
