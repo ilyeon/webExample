@@ -13,20 +13,20 @@
 		<tr>
 			<td class="writer">{{writer}}</td>
 			<td class="comment">{{comment}}</td>
-			<td class="modify">{{{modifyComment id}}}</td>
-			<td class="remove">{{{removeComment id}}}</td>
+			<td class="modify">{{{modifyComment id userId}}}</td>
+			<td class="remove">{{{removeComment id userId}}}</td>
 		</tr>
 		{{/each}}
     </script>
     
 	<script th:inline="javascript">/*<![CDATA[*/
 
-     	Handlebars.registerHelper('modifyComment', function(id){
-			return "<a onclick='showModifyCommentInput("+id+", this)'>수정</a>";
+     	Handlebars.registerHelper('modifyComment', function(id, userId){
+			return "<a onclick='showModifyCommentInput("+id+", "+userId+", this)'>수정</a>";
 		});
 
-		Handlebars.registerHelper('removeComment', function(id){
-			return "<a onclick='removeComment("+id+")'>삭제</a>";
+		Handlebars.registerHelper('removeComment', function(id, userId){
+			return "<a onclick='removeComment("+id+", "+userId+")'>삭제</a>";
 		});
 
        $(function(){
@@ -41,42 +41,51 @@
            })
        })
 	   
-	   function showModifyCommentInput(id, a)
+	   function showModifyCommentInput(id, userId, a)
 	   {
-			var tr = $(a).parent().parent();
-			var comment = tr.find(".comment");
-			var modify = tr.find(".modify").hide();
-			var remove = tr.find(".remove").hide();
+		   	var user = /*[[${user}]]*/;
 			
-			var commentInput = document.createElement('input');
-			commentInput.value = comment.text()
+			if(userId == user)
+			{
+				var tr = $(a).parent().parent();
+				var comment = tr.find(".comment");
+				var modify = tr.find(".modify").hide();
+				var remove = tr.find(".remove").hide();
+				
+				var commentInput = document.createElement('input');
+				commentInput.value = comment.text()
 
-			var save = document.createElement('a');
-			save.onclick = function(){
-				modifyComment(id, commentInput);
+				var save = document.createElement('a');
+				save.onclick = function(){
+					modifyComment(id, commentInput);
+				}
+				save.innerHTML = "저장";
+
+				var cancle = document.createElement('a');
+				cancle.onclick = function(){
+					commentInput.remove();
+					save.remove();
+					cancle.remove();
+					comment.show();
+					modify.show();
+					remove.show();
+				}
+				cancle.innerHTML = "취소"
+
+				comment.hide();
+				modify.hide();
+				remove.hide();
+				tr.append(commentInput);
+				tr.append(save);
+				tr.append(cancle);
 			}
-			save.innerHTML = "저장";
-
-			var cancle = document.createElement('a');
-			cancle.onclick = function(){
-				commentInput.remove();
-				save.remove();
-				cancle.remove();
-				comment.show();
-				modify.show();
-				remove.show();
+			else
+			{
+				alert("권한이 없습니다");
 			}
-			cancle.innerHTML = "취소"
-
-			comment.hide();
-			modify.hide();
-			remove.hide();
-			tr.append(commentInput);
-			tr.append(save);
-			tr.append(cancle);
 	   }
 
-	   function modifyComment(id, input)
+	   function modifyComment(id,input)
 	   {	
 			$.ajax({
 				url : /*[[@{|/modifyComment|}]]*/,
@@ -85,22 +94,31 @@
 				cache : false,
 				success : function(data)
 				{
-                    loadCommentList();
+					loadCommentList();
 				}	
 			});
 	   }
 
-	   function removeComment(id)
+	   function removeComment(id, userId)
 	   {
-			$.ajax({
-				url : /*[[@{|/deleteComment|}]]*/,
-				type : "POST",
-				data : {"id" : id},
-				cache : false,
-				success : function(data) {
-                    loadCommentList();
-				}
-			});
+			var user = /*[[${user}]]*/;
+			
+			if(userId == user)
+			{
+				$.ajax({
+					url : /*[[@{|/deleteComment|}]]*/,
+					type : "POST",
+					data : {"id" : id},
+					cache : false,
+					success : function(data) {
+						loadCommentList();
+					}
+				});
+			}
+			else
+			{
+				alert("권한이 없습니다");
+			}
 	   }
 
         function addComment()
@@ -128,8 +146,6 @@
 				contentType : false,
 				processData : false,
 				success : function(data) {
-					console.log(data);
-					
 					var source = $("#list-template").html();
 					var template = Handlebars.compile(source);
 					var itemList = template(data); 

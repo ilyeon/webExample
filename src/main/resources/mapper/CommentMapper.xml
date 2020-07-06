@@ -7,7 +7,7 @@
     </insert>
 
     <select id="selectCommentList" parameterType="java.lang.Integer" resultType="com.example.website.model.Comment">
-        SELECT c.comment, c.id, c.id as userId, u.name as writer
+        SELECT c.comment, c.id, u.id as userId, u.name as writer
 		from tb_comment AS c
 			LEFT JOIN tb_user AS u ON c.user_id = u.id
 		WHERE c.board_id = #{boardId, jdbcType=INTEGER}

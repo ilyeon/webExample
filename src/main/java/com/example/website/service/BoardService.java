@@ -7,6 +7,7 @@ import com.example.website.mapper.BoardMapper;
 import com.example.website.mapper.CommentMapper;
 import com.example.website.model.Board;
 import com.example.website.model.Comment;
+import com.example.website.model.Criteria;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,9 +26,14 @@ public class BoardService
         boardMapper.insertBoard(board);
     }
 
-    public List<HashMap<String, Object>> getBoardList()
+    public List<Board> getBoardList(Criteria criteria)
     {
-        return boardMapper.selectBoardList();
+        return boardMapper.selectBoardList(criteria);
+    }
+
+    public int getBoardCount(Criteria criteria)
+    {
+        return boardMapper.selectTotalCount(criteria);
     }
 
     public Board getBoard(int id)

@@ -5,8 +5,9 @@ import java.util.List;
 
 import com.example.website.model.Board;
 import com.example.website.model.Comment;
+import com.example.website.model.Criteria;
 import com.example.website.model.LoginUserDetails;
-import com.example.website.model.User;
+import com.example.website.model.pageMaker;
 import com.example.website.service.BoardService;
 import com.example.website.service.UserService;
 
@@ -44,10 +45,19 @@ public class BoardController
     
     @ResponseBody
     @RequestMapping(value = "/boardList", method = RequestMethod.GET)
-    public List<HashMap<String, Object>> getBoardList()
+    public HashMap<String, Object> getBoardList(Criteria criteria)
     {
-        List<HashMap<String, Object>> list = boardService.getBoardList();
-        return list;
+        HashMap<String, Object> map = new HashMap<String, Object>();
+
+        pageMaker pageMaker = new pageMaker();
+        pageMaker.setCriteria(criteria);
+        pageMaker.setTotalCount(boardService.getBoardCount(criteria));
+        
+        List<Board> list = boardService.getBoardList(criteria);
+
+        map.put("list", list);
+        map.put("pageMaker", pageMaker);
+        return map;
     }
 
     @RequestMapping(value = "/newBoard", method = RequestMethod.GET)
@@ -74,6 +84,7 @@ public class BoardController
         Board board = boardService.getBoard(id);
         model.addAttribute("canModify", (board.getuserId() == userDetails.getId()));
         model.addAttribute("board", boardService.getBoard(id));
+        model.addAttribute("user", userDetails.getId());
         
         return "boardDetail";
     }

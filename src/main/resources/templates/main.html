@@ -9,17 +9,32 @@
     </head>
     
     <script id="list-template" type="text/x-handlebars-template">
-		{{#if this}}
-			{{#each this}}
+		{{pageMaker.criteria.currentPage}}
+		{{#if list}}
+			{{#each list}}
 			<tr>
-				<td>{{id}}</td>
+				<td>{{boardNo @index ../pageMaker}}</td>
 				<td>{{{boardLink id title}}}</td>
 				<td>{{writer}}</td>
 			</tr>
 			{{/each}}
+		{{else}}
+			<td>데이터 없음</td>
 		{{/if}}		 
 	</script>
 
+	<script id="page-template" type="text/x-handlebars-template">
+		{{# pageMaker}}
+			{{#if prev}} <a id="prev" onclick="setCurrentPage({{startPage}}-1)"> < </a> {{/if}}
+			{{#if pageButton}}
+				{{#each pageButton}}
+					<a onclick="setCurrentPage({{this}})">{{this}}</a>
+				{{/each}}
+			{{/if}}
+			{{#if next}} <a id="next" onclick="setCurrentPage({{endPage}}+1)"> > </a> {{/if}}
+		{{/ pageMaker}}
+	</script>
+	
 	<script th:inline="javascript">/*<![CDATA[*/
 		$(function()
 		{
@@ -28,24 +43,48 @@
 
 		function loadBoardList()
 		{	
+			var currentPage = $("#currentPage").val();
+			var titleSearch = $("#titleSearch").val();
+
 			$.ajax({
 				url : /*[[@{|/boardList|}]]*/,
 				type : "get",
+				data : {"currentPage" : currentPage, "titleSearch" : titleSearch},
 				cache : false,
-				contentType : false,
-				processData : false,
 				success : function(data) {
 					var source = $("#list-template").html();
 					var template = Handlebars.compile(source);
 					var itemList = template(data); 
+
+					var source2 = $("#page-template").html();
+					var template2 = Handlebars.compile(source2);
+					var itemList2 = template2(data); 
 					
 					$('#postList').html(itemList);
+					$('#pageButtonDiv').html(itemList2);
 				}
 			});
 		}
 
+		function setSearchData()
+		{
+			$("#titleSearch").val($("#searchVal").val());
+			$("#currentPage").val(1);
+			loadBoardList();
+		}
+
+		function setCurrentPage(id)
+		{
+			$("#currentPage").val(id);
+			loadBoardList();
+		}
+
 		Handlebars.registerHelper('boardLink', function(id, title){
 			return "<a href='/webExample/board/"+id+"'>"+title+"</a>";
+		});
+
+		Handlebars.registerHelper('boardNo', function(index, pageMaker){
+			return index+1+((pageMaker.criteria.currentPage-1)*pageMaker.criteria.perPageNum);
 		});
 
 		/*]]>*/
@@ -57,6 +96,12 @@
         </div>
         <div id="boards">
 			<div style="background-color: bisque; width: fit-content;"><a th:href="@{/newBoard}"> new </a></div>
+			<div>
+				<form id="searchForm">
+					<input type="text" id="searchVal"/>
+					<button type="button" onclick="setSearchData()">검색</button>
+				</form>
+			</div>
             <table id="listTable" style="border: 1px solid black; width: 70%;">
                 <thead>
                     <tr>
@@ -66,7 +111,14 @@
                     </tr>
                 </thead>
                 <tbody id="postList"></tbody>
-            </table>
+			</table>
+			</div>
+			<div id="pageButtonDiv">
+			</div>
+			<form id="pageForm">
+				<input type="hidden" id="currentPage" name="currentPage" value="1"/>
+				<input type="hidden" id="titleSearch" name="titleSearch" />
+			</form>
         </div>
 	</body>
 </html>
