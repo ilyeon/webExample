@@ -19,19 +19,8 @@
 		SELECT b.id, b.title, b.view_count as viewCount, u.name as writer
 		from tb_board AS b
 		LEFT JOIN tb_user AS u ON b.user_id = u.id
-		<if test="searchValue != null and searchValue != ''">
-			<choose>
-				<when test="searchType == 1">
-					WHERE b.title LIKE CONCAT('%', #{searchValue,jdbcType=VARCHAR}, '%')
-				</when>
-				<when test="searchType == 2">
-					WHERE b.title LIKE CONCAT('%', #{searchValue,jdbcType=VARCHAR}, '%')
-					OR b.content LIKE CONCAT('%', #{searchValue,jdbcType=VARCHAR}, '%')
-				</when>
-				<when test="searchType == 3">
-					WHERE u.name LIKE CONCAT ('%', #{searchValue,jdbcType=VARCHAR}, '%')
-				</when>
-			</choose>
+		<if test="titleSearch != null and titleSearch != ''">
+			WHERE b.title LIKE CONCAT('%', #{titleSearch,jdbcType=VARCHAR},'%')
 		</if>
 		ORDER BY b.id DESC
 		LIMIT #{startPageNum,jdbcType=INTEGER}, #{perPageNum,jdbcType=INTEGER}
@@ -39,21 +28,9 @@
 
 	<select id="selectTotalCount" resultType="java.lang.Integer" parameterType="com.example.website.model.Criteria">
 		select count(*)
-		from tb_board AS b
-		LEFT JOIN tb_user AS u ON b.user_id = u.id
-		<if test="searchValue != null and searchValue != ''">
-			<choose>
-				<when test="searchType == 1">
-					WHERE b.title LIKE CONCAT('%', #{searchValue,jdbcType=VARCHAR}, '%')
-				</when>
-				<when test="searchType == 2">
-					WHERE b.title LIKE CONCAT('%', #{searchValue,jdbcType=VARCHAR}, '%')
-					OR b.content LIKE CONCAT('%', #{searchValue,jdbcType=VARCHAR}, '%')
-				</when>
-				<when test="searchType == 3">
-					WHERE u.name LIKE CONCAT ('%', #{searchValue,jdbcType=VARCHAR}, '%')
-				</when>
-			</choose>
+		from tb_board
+		<if test="titleSearch != null and titleSearch != ''">
+			WHERE title LIKE CONCAT('%', #{titleSearch,jdbcType=VARCHAR},'%')
 		</if>
 	</select>
 

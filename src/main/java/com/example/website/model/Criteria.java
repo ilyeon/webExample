@@ -5,8 +5,7 @@ public class Criteria {
 	private int perPageNum = 10; // 페이지당 보여줄 글 개수 (리미트끝)
 	private int startPageNum = 0; // 리미트시작점
 
-	private String searchValue;
-	private int searchType;
+	private String titleSearch;
 
 	public int getCurrentPage() {
 		return this.currentPage;
@@ -32,19 +31,11 @@ public class Criteria {
 		return (this.currentPage -1)*perPageNum;
 	}
 	
-	public String getSearchValue() {
-		return this.searchValue;
+	public String getTitleSearch() {
+		return this.titleSearch;
 	}
 
-	public void setSearchValue(String searchValue) {
-		this.searchValue = searchValue;
-	}
-
-	public int getSearchType() {
-		return this.searchType;
-	}
-
-	public void setSearchType(int searchType) {
-		this.searchType = searchType;
+	public void setTitleSearch(String titleSearch) {
+		this.titleSearch = titleSearch;
 	}
 }
