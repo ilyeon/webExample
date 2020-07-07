@@ -7,6 +7,18 @@
 		<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
 		<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
 	</head>
+
+	<style>
+		.ellipsis
+		{
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			width: 500px;
+			display: block; 
+		}
+
+	</style>
 	
 	<script id="list-template" type="text/x-handlebars-template">
 		{{pageMaker.criteria.currentPage}}
@@ -14,8 +26,9 @@
 			{{#each list}}
 			<tr>
 				<td>{{boardNo @index ../pageMaker}}</td>
-				<td>{{{boardLink id title}}}</td>
+				<td class="ellipsis">{{{boardLink id title}}}</td>
 				<td>{{writer}}</td>
+				<td>{{viewCount}}</td>
 			</tr>
 			{{/each}}
 		{{else}}
@@ -40,21 +53,20 @@
 		{
 			loadBoardList();
 
-			document.getElementById("searchForm").onkeypress = function(e)
+			document.getElementById("searchVal").onkeypress = function(e)
 			{
 				var key = e.charCode || e.keyCode || 0;     
 				if (key == 13)
 				{
 					setSearchData();
-					return false;
 				}
 			}
 		})
 
 		function loadBoardList()
 		{	
-			var currentPage = $("#currentPage").val();
-			var titleSearch = $("#titleSearch").val();
+				var currentPage = $("#currentPage").val();
+				var titleSearch = $("#titleSearch").val();
 
 			$.ajax({
 				url : /*[[@{|/boardList|}]]*/,
@@ -106,20 +118,21 @@
 			<h3>BOARD</h3>
 			<p th:text="${user.name}"></p><a th:href="@{/logout}">로그아웃</a>
 		</div>
-		<div id="boards">
+		<div id="boards" style="width: 1000px;">
 			<div style="background-color: bisque; width: fit-content;"><a th:href="@{/newBoard}"> new </a></div>
 			<div>
-				<form id="searchForm">
+				<form id="searchForm" onsubmit="return false;">
 					<input type="text" id="searchVal"/>
 					<button type="button" id="searchButton" onclick="setSearchData()">검색</button>
 				</form>
 			</div>
-			<table id="listTable" style="border: 1px solid black; width: 70%;">
+			<table id="listTable" style="border: 1px solid black; width: auto;">
 				<thead>
 					<tr>
 						<th>No</th>
 						<th>제목</th>
 						<th>작성자</th>
+						<th>조회수</th>
 					</tr>
 				</thead>
 				<tbody id="postList"></tbody>

@@ -16,7 +16,7 @@
 	</insert>
 
 	<select id="selectBoardList" resultType="com.example.website.model.Board" parameterType="com.example.website.model.Criteria">
-		SELECT b.id, b.title, u.name as writer
+		SELECT b.id, b.title, b.view_count as viewCount, u.name as writer
 		from tb_board AS b
 		LEFT JOIN tb_user AS u ON b.user_id = u.id
 		<if test="titleSearch != null and titleSearch != ''">
@@ -49,7 +49,7 @@
 
 	<update id="updateBoard" parameterType="com.example.website.model.Board">
 		UPDATE tb_board
-		SET title=#{title,jdbcType=VARCHAR}, content=#{content,jdbcType=VARCHAR}, date_time = NOW()
+		SET title=#{title,jdbcType=VARCHAR}, content=#{content,jdbcType=VARCHAR}, date_time = NOW(), view_count=#{viewCount,jdbcType=INTEGER}
 		WHERE id = #{id,jdbcType=INTEGER}
 	</update>
 
