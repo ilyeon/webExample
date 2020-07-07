@@ -2,44 +2,58 @@
 <html xmlns:th="http://www.thymeleaf.org">
 	<head>
 		<meta charset=utf-8/>
-        <title>website</title>
-        
-        <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
-        <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
-    </head>
-    
-    <script id="list-template" type="text/x-handlebars-template">
+		<title>website</title>
+		
+		<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+		<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+	</head>
+	
+	<script id="list-template" type="text/x-handlebars-template">
 		{{#each this}}
 		<tr>
 			<td class="writer">{{writer}}</td>
 			<td class="comment">{{comment}}</td>
-			<td class="modify">{{{modifyComment id userId}}}</td>
-			<td class="remove">{{{removeComment id userId}}}</td>
+			{{{modifyComment id userId}}}
+			{{{removeComment id userId}}}
 		</tr>
 		{{/each}}
-    </script>
-    
+	</script>
+	
 	<script th:inline="javascript">/*<![CDATA[*/
 
-     	Handlebars.registerHelper('modifyComment', function(id, userId){
-			return "<a onclick='showModifyCommentInput("+id+", "+userId+", this)'>수정</a>";
+	 	Handlebars.registerHelper('modifyComment', function(id, userId){
+			if(userId == [[${user}]])
+			{
+				return "<td class='modify'><a onclick='showModifyCommentInput("+id+", "+userId+", this)'>수정</a></td>";
+			}
 		});
 
 		Handlebars.registerHelper('removeComment', function(id, userId){
-			return "<a onclick='removeComment("+id+", "+userId+")'>삭제</a>";
+			if(userId == [[${user}]])
+			{
+				return "<td class='remove'><a onclick='removeComment("+id+", "+userId+")'>삭제</a></td>";
+			}
 		});
 
-       $(function(){
-            loadCommentList();
+	   $(function(){
+			loadCommentList();
 
-           $("#commentButton").click(function(){
-               if(!($("#commentInput").val() == null || $("#commentInput").val() == ''))
-               {    
-                    addComment();
-                    $("#commentInput").val('');
-               }
-           })
-       })
+		   $("#commentButton").click(function(){
+			   if(!($("#commentInput").val() == null || $("#commentInput").val() == ''))
+			   {    
+					addComment();
+			   }
+		   })
+		   
+		   document.getElementById("commentInput").onkeypress = function(e)
+			{
+				var key = e.charCode || e.keyCode || 0;     
+				if (key == 13)
+				{
+					addComment();
+				}
+			}
+	   })
 	   
 	   function showModifyCommentInput(id, userId, a)
 	   {
@@ -54,6 +68,14 @@
 				
 				var commentInput = document.createElement('input');
 				commentInput.value = comment.text()
+				commentInput.onkeypress = function(e)
+				{
+					var key = e.charCode || e.keyCode || 0;     
+					if (key == 13)
+					{
+						modifyComment(id, commentInput);
+					}
+				}
 
 				var save = document.createElement('a');
 				save.onclick = function(){
@@ -121,27 +143,28 @@
 			}
 	   }
 
-        function addComment()
+		function addComment()
 		{
 			$.ajax({
 				url : /*[[@{|/addComment|}]]*/,
 				type : "POST",
 				cache : false,
-                data : new FormData(document.getElementById("commentForm")),
+				data : new FormData(document.getElementById("commentForm")),
 				contentType : false,
 				processData : false,
 				success : function(data) {
-                    loadCommentList();
+					loadCommentList();
 				}
 			});
+			$("#commentInput").val('');
 		}
 
-        function loadCommentList()
+		function loadCommentList()
 		{
 			$.ajax({
 				url : /*[[@{|/commentList|}]]*/,
 				type : "POST",
-                data : new FormData(document.getElementById("commentForm")),
+				data : new FormData(document.getElementById("commentForm")),
 				cache : false,
 				contentType : false,
 				processData : false,
@@ -191,27 +214,27 @@
 	</script>
 	<body>
 		<p><a th:href="@{/main}">목록</a></p>
-        <p th:text="${board.title}"></p>
-		<p th:text="${board.content}"></p>
+		<p th:text="${board.title}"></p>
+		<p style="white-space: pre-line" th:text="${board.content}"></p>
 		<p th:if="${canModify}" onclick="updateBoard()">수정</p>
-        <p th:if="${canModify}" onclick="deleteBoard()">삭제</p>
-        <form id="commentForm">
-            <input type="hidden" id ="boardId" name="boardId" th:value="${board.id}">
-            <input type="text" name="comment" id="commentInput">
-            <button type="button" id="commentButton">입력</button>
-        </form>
+		<p th:if="${canModify}" onclick="deleteBoard()">삭제</p>
+		<form id="commentForm" onsubmit="return false;">
+			<input type="hidden" id ="boardId" name="boardId" th:value="${board.id}">
+			<input type="text" name="comment" id="commentInput">
+			<button type="button" id="commentButton">입력</button>
+		</form>
 
-        <div>
-            <table id="commentTable">
-                <tr>
-                    <td>작성자</td>
-                    <td>내용</td>
-                </tr>
-                <tbody id="commentList">
-                </tbody>
-            </table>
-        </div>
-        
+		<div>
+			<table id="commentTable">
+				<tr>
+					<td>작성자</td>
+					<td>내용</td>
+				</tr>
+				<tbody id="commentList">
+				</tbody>
+			</table>
+		</div>
+		
 
 	</body>
 </html>
