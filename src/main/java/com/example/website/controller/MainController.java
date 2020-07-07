@@ -1,9 +1,11 @@
 package com.example.website.controller;
 
+import com.example.website.exception.DuplicateLoginIdException;
 import com.example.website.model.User;
 import com.example.website.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,39 +46,15 @@ public class MainController
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public String createUser(User user, String passwordCheck, Model model)
 	{
-		if(user.getName() == null || user.getName() == "")
-		{
-			model.addAttribute("nameBlank", "이름 미입력");
-			return "register";
-		}
-
-		if(user.getLogin() == null)
-		{
-			model.addAttribute("idBlank", "아이디 미입력");
-			return "register";
-		}
-
-		if(user.getPassword() == null)
-		{
-			model.addAttribute("pwdBlank", "비밀번호 미입력");
-			return "register";
-		}
-
-		if(!user.getPassword().equals(passwordCheck))
-		{
-			model.addAttribute("errorPwdCheck", "비밀번호 불일치");
-			return "register";
-		}
-		
 		try
 		{
 			userService.createUser(user);
-			return "redirect:/login";
 		} 
-		catch (final Exception e)
+		catch (DuplicateLoginIdException e)
 		{
-			model.addAttribute("idDuplicate", "아이디 중복");
-			return "register";
+			return "fail";
 		}
+
+		return "success";
 	}
 }
