@@ -4,18 +4,18 @@
 	<resultMap id="BaseResultMap" type="com.example.website.model.User">
 		<id column="ID" jdbcType="INTEGER" property="id"/>
 		<result column="LOGIN" jdbcType="VARCHAR" property="login"/>
-        <result column="PASSWORD" jdbcType="VARCHAR" property="password"/>
-        <result column="NAME" jdbcType="VARCHAR" property="name"/>
+		<result column="PASSWORD" jdbcType="VARCHAR" property="password"/>
+		<result column="NAME" jdbcType="VARCHAR" property="name"/>
 	</resultMap>
 
-    <insert id="insertUser" parameterType="com.example.website.model.User">
-        insert into tb_user (login, password, name)
-        values (#{login,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR})
-    </insert>
+	<insert id="insertUser" parameterType="com.example.website.model.User">
+		insert into tb_user (login, password, name)
+		values (#{login,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR})
+	</insert>
 
-    <select id="selectUserByUsername" resultMap="BaseResultMap" parameterType="java.lang.String">
-        select id, login, password, name
-        from tb_user
-        where login=#{login, jdbcType=VARCHAR}
-    </select>
+	<select id="selectUserByUsername" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select id, login, password, name
+		from tb_user
+		where login=#{login, jdbcType=VARCHAR}
+	</select>
 </mapper>

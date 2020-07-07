@@ -15,69 +15,69 @@ import org.springframework.stereotype.Service;
 @Service
 public class BoardService
 {
-    @Autowired
-    BoardMapper boardMapper;
+	@Autowired
+	BoardMapper boardMapper;
 
-    @Autowired
-    CommentMapper commentMapper;
+	@Autowired
+	CommentMapper commentMapper;
 
-    public void createBoard(Board board)
-    {
-        boardMapper.insertBoard(board);
-    }
+	public void createBoard(Board board)
+	{
+		boardMapper.insertBoard(board);
+	}
 
-    public List<Board> getBoardList(Criteria criteria)
-    {
-        return boardMapper.selectBoardList(criteria);
-    }
+	public List<Board> getBoardList(Criteria criteria)
+	{
+		return boardMapper.selectBoardList(criteria);
+	}
 
-    public int getBoardCount(Criteria criteria)
-    {
-        return boardMapper.selectTotalCount(criteria);
-    }
+	public int getBoardCount(Criteria criteria)
+	{
+		return boardMapper.selectTotalCount(criteria);
+	}
 
-    public Board getBoard(int id)
-    {
-        return boardMapper.selectBoard(id);
-    }
+	public Board getBoard(int id)
+	{
+		return boardMapper.selectBoard(id);
+	}
 
-    public Board getBoardByCommentId(int commentId)
-    {
-        return boardMapper.selectBoardByCommentId(commentId);
-    }
+	public Board getBoardByCommentId(int commentId)
+	{
+		return boardMapper.selectBoardByCommentId(commentId);
+	}
 
-    public void modifyBoard(Board board)
-    {
-        boardMapper.updateBoard(board);
-    }
+	public void modifyBoard(Board board)
+	{
+		boardMapper.updateBoard(board);
+	}
 
-    public void removeBoard(int id)
-    {
-        boardMapper.deleteBoard(id);
-    }
+	public void removeBoard(int id)
+	{
+		boardMapper.deleteBoard(id);
+	}
 
-    public void addComment(Comment comment)
-    {
-        commentMapper.insertComment(comment);
-    }
+	public void addComment(Comment comment)
+	{
+		commentMapper.insertComment(comment);
+	}
 
-    public Comment getComment(int id)
-    {
-        return commentMapper.selectComment(id);
-    }
+	public Comment getComment(int id)
+	{
+		return commentMapper.selectComment(id);
+	}
 
-    public List<Comment> getCommentList(int boardId)
-    {
-        return commentMapper.selectCommentList(boardId);
-    }
+	public List<Comment> getCommentList(int boardId)
+	{
+		return commentMapper.selectCommentList(boardId);
+	}
 
-    public void updateComment(Comment comment)
-    {
-        commentMapper.updateComment(comment);
-    }
+	public void updateComment(Comment comment)
+	{
+		commentMapper.updateComment(comment);
+	}
 
-    public void removeComment(int id)
-    {
-        commentMapper.deleteComment(id);
-    }
+	public void removeComment(int id)
+	{
+		commentMapper.deleteComment(id);
+	}
 }

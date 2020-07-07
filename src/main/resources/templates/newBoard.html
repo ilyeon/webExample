@@ -2,22 +2,22 @@
 <html xmlns:th="http://www.thymeleaf.org">
 	<head>
 		<meta charset=utf-8/>
-        <title>website</title>
-        
-        <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
-        <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+		<title>website</title>
+		
+		<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+		<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
 	</head>
 	<script th:inline="javascript">/*<![CDATA[*/
-        
+		
 		/*]]>*/
 	</script>
 	<body>
 		<div>
-            <form th:action="@{/createBoard}", method="POST">
-                <label>제목</label><input type="text" name="title"/><br/>
-                <label>내용</label><textarea name="content"></textarea>
-                <input type="submit" value="저장"/>
-            </form>
-        </div>
+			<form th:action="@{/createBoard}", method="POST">
+				<label>제목</label><input type="text" name="title"/><br/>
+				<label>내용</label><textarea name="content"></textarea>
+				<input type="submit" value="저장"/>
+			</form>
+		</div>
 	</body>
 </html>

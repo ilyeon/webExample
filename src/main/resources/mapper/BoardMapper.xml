@@ -4,9 +4,9 @@
 	<resultMap id="BaseResultMap" type="com.example.website.model.Board">
 		<id column="ID" jdbcType="INTEGER" property="id"/>
 		<result column="TITLE" jdbcType="VARCHAR" property="title"/>
-        <result column="CONTENT" jdbcType="VARCHAR" property="content"/>
-        <result column="VIEW_COUNT" jdbcType="INTEGER" property="viewCount"/>
-        <result column="USER_ID" jdbcType="INTEGER" property="userId"/>
+		<result column="CONTENT" jdbcType="VARCHAR" property="content"/>
+		<result column="VIEW_COUNT" jdbcType="INTEGER" property="viewCount"/>
+		<result column="USER_ID" jdbcType="INTEGER" property="userId"/>
 		<result column="DATE_TIME" jdbcType="TIMESTAMP" property="dateTime"/>
 	</resultMap>
 
