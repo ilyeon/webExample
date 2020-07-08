@@ -1,16 +1,19 @@
 package com.example.website.controller;
 
 import com.example.website.exception.DuplicateLoginIdException;
+import com.example.website.model.LoginUserDetails;
 import com.example.website.model.User;
 import com.example.website.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller 
 public class MainController
@@ -43,6 +46,7 @@ public class MainController
 		return "register";
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public String createUser(User user, String passwordCheck, Model model)
 	{
