@@ -66,12 +66,13 @@
 		function loadBoardList()
 		{	
 				var currentPage = $("#currentPage").val();
-				var titleSearch = $("#titleSearch").val();
+				var searchValue = $("#searchValue").val();
+				var searchType = $("#searchType").val();
 
 			$.ajax({
 				url : /*[[@{|/boardList|}]]*/,
 				type : "get",
-				data : {"currentPage" : currentPage, "titleSearch" : titleSearch},
+				data : {"currentPage" : currentPage, "searchValue" : searchValue, "searchType" : searchType},
 				cache : false,
 				success : function(data) {
 					var source = $("#list-template").html();
@@ -90,7 +91,7 @@
 
 		function setSearchData()
 		{
-			$("#titleSearch").val($("#searchVal").val());
+			$("#searchValue").val($("#searchVal").val());
 			$("#currentPage").val(1);
 			loadBoardList();
 		}
@@ -122,6 +123,11 @@
 			<div style="background-color: bisque; width: fit-content;"><a th:href="@{/newBoard}"> new </a></div>
 			<div>
 				<form id="searchForm" onsubmit="return false;">
+					<select id="searchType">
+						<option value="1">제목</option>
+						<option value="2">제목 내용</option>
+						<option value="3">작성자</option>
+					</select>
 					<input type="text" id="searchVal"/>
 					<button type="button" id="searchButton" onclick="setSearchData()">검색</button>
 				</form>
@@ -142,7 +148,7 @@
 			</div>
 			<form id="pageForm">
 				<input type="hidden" id="currentPage" name="currentPage" value="1"/>
-				<input type="hidden" id="titleSearch" name="titleSearch" />
+				<input type="hidden" id="searchValue" name="searchValue"/>
 			</form>
 		</div>
 	</body>

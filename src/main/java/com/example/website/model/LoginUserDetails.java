@@ -8,7 +8,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 public class LoginUserDetails extends org.springframework.security.core.userdetails.User {
 	private int id;
 	private String login;
-	private String password;
 	private String name;
 
 	public LoginUserDetails(User account) {
@@ -16,7 +15,6 @@ public class LoginUserDetails extends org.springframework.security.core.userdeta
 		id = account.getId();
 		login = account.getLogin();
 		name = account.getName();
-		password = account.getPassword();
 	}
 
 	private static List<SimpleGrantedAuthority> authorities() {
@@ -37,14 +35,6 @@ public class LoginUserDetails extends org.springframework.security.core.userdeta
 
 	public void setLogin(String login) {
 		this.login = login;
-	}
-
-	public String getPassword() {
-		return this.password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	public String getName() {
